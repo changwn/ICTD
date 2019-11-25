@@ -6,10 +6,10 @@ The web application demo is available at :
 
 **https://shiny.ph.iu.edu/ICTD/**
 
-Second link:
-https://ictd.ccbb.iupui.edu
+
 
 ![image](https://github.com/zy26/ICTD/blob/master/img/web_app.png)
+Backup link: https://ictd.ccbb.iupui.edu
 
 # Installation
 
