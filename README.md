@@ -5,9 +5,10 @@ This method is described in the publication from Biorxiv, 2018 available at http
 The web application demo is available at : **https://shiny.ph.iu.edu/ICTD/**
 
 ![image](https://github.com/zy26/ICTD/blob/master/img/web_app.png)
-Backup link: https://ictd.ccbb.iupui.edu
 
 ICTD web application tutorial is available at : **https://github.com/changwn/ICTD/blob/master/ICTD_server_tutorial.md**
+
+Backup link: https://ictd.ccbb.iupui.edu
 
 
 # Installation
