@@ -2,12 +2,14 @@
 
 This method is described in the publication from Biorxiv, 2018 available at https://www.biorxiv.org/content/10.1101/426593v2
 
-The web application demo is available at **https://shiny.ph.iu.edu/connect/#/apps/17/access**
+The web application demo is available at :
 
-Second link:
-https://ictd.ccbb.iupui.edu
+**https://shiny.ph.iu.edu/ICTD/**
+
+
 
 ![image](https://github.com/zy26/ICTD/blob/master/img/web_app.png)
+Backup link: https://ictd.ccbb.iupui.edu
 
 # Installation
 
