@@ -1,84 +1,44 @@
-# Description
+## ICTD Web Application Instruction
 
-This method is described in the publication from Biorxiv, 2018 available at https://www.biorxiv.org/content/10.1101/426593v2
+- Please **refresh** webpage or click **F5** to make sure R shiny works fine.
 
-The web application demo is available at **https://shiny.ph.iu.edu/connect/#/apps/17/access**
-  
-  Second link:
-  https://ictd.ccbb.iupui.edu
-
-![image](https://github.com/zy26/ICTD/blob/master/img/web_app.png)
-
-# Installation
-
-
-```
-#install dependent pkg
-if (!requireNamespace("BiocManager", quietly = TRUE))
-  install.packages("BiocManager")
-BiocManager::install("impute", version = "3.8")
-BiocManager::install("GO.db", version = "3.8")
-BiocManager::install("sva", version = "3.8")
-BiocManager::install("preprocessCore", version = "3.8")
-
-rforge <- "http://r-forge.r-project.org"
-install.packages("estimate", repos=rforge, dependencies=TRUE)
-
-#install ICTD
-install.packages("devtools")
-devtools::install_github("zy26/ICTD")
-```
-
-
-
-Note : For old R version which cannot install 'BiocManager', please use below command to install the dependency.
-```
-source("https://bioconductor.org/biocLite.R")
-biocLite("impute")
-biocLite("GO.db")
-biocLite("sva")
-biocLite("preprocessCore")
-
-rforge <- "http://r-forge.r-project.org"
-install.packages("estimate", repos=rforge, dependencies=TRUE)
-```
-
-# Example
-
-```
-library(ICTD)
-
-data_bulk = GSE72056_diri_example[[1]]
-ictd_result <- ICTD(data_bulk)
-
-#Return value is a list, which the first element is the predicted proportion and 
-#the second element is the predicted markers of ICTD
-```
-
-# Questions & Problems
-
-If you have any questions or problems when using ICTD, please feel free to open a new issue [here](https://github.com/zy26/ICTD/issues). We will fix the new issue ASAP.  You can also email the maintainers and authors below.
-
-- [Wennan Chang](https://zcslab.github.io/people/wennan/)
-(wnchang@iu.edu)
-
-PhD candidate at BDR group, Indiana University School of Medicine
-
-- [Chi Zhang](https://medicine.iu.edu/departments/genetics/faculty/27057/zhang-chi/)
-(czhang87@iu.edu)
-
-Assistant Professor
-
-Department of Medical & Molecular Genetics, Indiana University School of Medicine
-
-
-
-# Dependencies
-
-We also provide a Docker image to recreate the compute environment. See the Dockerfile for more details.
-
-https://hub.docker.com/r/wnchang/ictd
-
-Using the Docker image could void the conflict issue that R version and several R packages version confict. 
-
-For more details about the Docker, please see Docker documentation page https://docs.docker.com/.
+1. Upload your data by clicking the **Browse** button. You can skip this step if you wish to use defualt data set. The default dataset can be download follows below instruction.<br/>
+<br/>
+<img src="https://github.com/changwn/ICTD_server/blob/master/tutorial_fig/upload1.png" width=60%><br/>
+<br/>
+2. Choose the **tissue type** for your dataset.<br/>
+<br/>
+<img src="https://github.com/changwn/ICTD_server/blob/master/tutorial_fig/tissuetype1.png" width=60%><br/>
+<br/>
+3. ICTD provied trained cell type marker genes table for above three tissue type. <br/>
+You can download the ***score table*** by **clicking** the blue superlink.<br/>
+<br/>
+<img src="https://github.com/changwn/ICTD_server/blob/master/tutorial_fig/downScoreTable1.png" width=60%><br/>
+<br/>
+4. It is time to **run ICTD**! <br/>
+Clicking the button to active the deconvolution process. The whole process will takes around 5 minutes but the wait time maybe longer if the dataset is large.<br/>
+<br/>
+<img src="https://github.com/changwn/ICTD_server/blob/master/tutorial_fig/run1.png" width=60%><br/>
+<br/>
+5. The ICTD predicted cell type proportion will show automatically.<br/>
+Partial results will print in the form of the table while whole results will show as the heatmap figure.<br/>
+<br/>
+<img src="https://github.com/changwn/ICTD_server/blob/master/tutorial_fig/heatmap1.png" width=60%><br/>
+<br/>
+6. You can download the predicted result (.csv file) by **clicking** the button.<br/>
+<br/>
+<img src="https://github.com/changwn/ICTD_server/blob/master/tutorial_fig/savePrediction1.png" width=60%><br/>
+<br/>
+7. The ICTD also provided the **top marker genes** of each cell type for the input dataset.<br/>
+<br/>
+<img src="https://github.com/changwn/ICTD_server/blob/master/tutorial_fig/markerlist1.png" width=60%><br/>
+<br/>
+8. You can download the data specific top marker genes (.csv file) by **clicking** the button.<br/>
+<br/>
+<img src="https://github.com/changwn/ICTD_server/blob/master/tutorial_fig/saveMarker1.png" width=50%><br/>
+<br/>
+9. The web application will plot the cell type proportion (barplot) for **user selected patient**.<br/>
+Please **input** your interested patient ID. The barplot will update instantly.<br/>
+<br/>
+<img src="https://github.com/changwn/ICTD_server/blob/master/tutorial_fig/barplot1.png" width=60%><br/>
+<br/>
