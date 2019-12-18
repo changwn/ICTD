@@ -9,14 +9,14 @@
 
 
 
-Step2plus_Celltype_marker_Hierarchical_CTES4 <- function (tg_R1_lists, data_CORS_cancer, data.matrix, tg_R1_list_stat, cell_type_enrich_cut = 0.45, tg_R1_cut = 6, ext_cn = 0, CT_balance = 1) 
+Step2plus_Celltype_marker_Hierarchical_CTES4 <- function (tg_R1_lists, data_CORS_cancer, data.matrix, tg_R1_list_stat, cell_type_enrich_cut = 0.45, tg_R1_cut = 6, ext_cn = 0, CT_balance = 1, immune_cell_uni_table0_GS, IM_id_list) 
 {
     tg_selected_R4 <- tg_R1_lists
     tg_R1_lists_st0 <- tg_R1_lists
     for (i in 1:length(tg_R1_lists)) {
         tg_R1_lists_st0[[i]] <- tg_R1_lists_st0[[i]][1:min(length(tg_R1_lists_st0[[i]]), tg_R1_cut)]
     }
-    stat_selected_R4_RR <- compute_IM_stat(tg_list_c = tg_R1_lists_st0, immune_cell_uni_table = immune_cell_uni_table0_GS,IM_id_list0=IM_id_list)
+    stat_selected_R4_RR <- compute_IM_stat(tg_R1_lists_st0, immune_cell_uni_table0_GS, IM_id_list)
     print("(CTES4:) compute_IM_stat done.")
     stat_selected_R4_RR_max <- apply(stat_selected_R4_RR, 1, max)
     names(tg_R1_lists_st0) <- names(stat_selected_R4_RR_max)

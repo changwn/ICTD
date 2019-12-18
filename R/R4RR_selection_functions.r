@@ -192,7 +192,7 @@ compute_CompRowspace_NN<-function(data_cc=tg_data,module_RB=module_selected[[4]]
 
 
 
-compute_IM_stat<-function(tg_list_c,immune_cell_uni_table=immune_cell_uni_table0_GS,IM_id_list0=ICTD::IM_id_list)
+compute_IM_stat<-function(tg_list_c,immune_cell_uni_table ,IM_id_list0)
 {
 	ccc<-c()
 	nn<-c()
