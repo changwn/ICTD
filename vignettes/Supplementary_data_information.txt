@@ -1,0 +1,43 @@
+
+1.
+Supplementary figure legend.
+github link:
+
+2.
+Supplementary table legend.
+github link:
+
+
+3.
+ICTD key function annotation. (R function and location)
+function name listed as:
+
+
+4. RData variable listed as:
+labeling matrix
+cancer genes
+
+
+5. supplemtary result
+(RData)
+all intermidate result (CTES3)
+T cell function and markers
+Fibroblast function and markers
+Myeloid function and markers
+other functions
+co-deconvolution result.
+
+6. Tutorial link as.
+single cell build labeling matrix function
+remove undesired cell type
+data normalization
+ICTD whole function, options: (a) labeling matrix, (b) selected cell type marker method 
+		(c) svd or cNMF (d) guide ICTD with known cell type marker
+
+SC complete pipeline.
+SC tSNE plot.
+
+
+
+
+
