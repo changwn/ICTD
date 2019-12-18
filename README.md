@@ -27,7 +27,7 @@ install.packages("estimate", repos=rforge, dependencies=TRUE)
 
 #install ICTD
 install.packages("devtools")
-devtools::install_github("zy26/ICTD")
+devtools::install_github("changwn/ICTD")
 ```
 
 
