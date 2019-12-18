@@ -17,7 +17,7 @@ Step2plus_Celltype_marker_Hierarchical_CTES4<-function(tg_R1_lists,data_CORS_can
         {
           tg_R1_lists_st0[[i]]<-tg_R1_lists_st0[[i]][1:min(length(tg_R1_lists_st0[[i]]),tg_R1_cut)]
         }
-        stat_selected_R4_RR<-compute_IM_stat(tg_list_c=tg_R1_lists_st0)
+        stat_selected_R4_RR<-compute_IM_stat(tg_list_c=tg_R1_lists_st0, IM_id_list0=IM_id_list)
         stat_selected_R4_RR_max<-apply(stat_selected_R4_RR,1,max)
         names(tg_R1_lists_st0)<-names(stat_selected_R4_RR_max)
 

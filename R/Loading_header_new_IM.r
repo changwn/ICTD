@@ -32,8 +32,8 @@
 	
 	
 	
-	#############
-	IM_id_list<-list()
+  #############
+  IM_id_list<-list()
   for(i in 1:ncol(marker_stats20_uni))
   {
   	IM_id_list[[i]]<-i
