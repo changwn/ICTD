@@ -192,16 +192,16 @@ compute_CompRowspace_NN<-function(data_cc=tg_data,module_RB=module_selected[[4]]
 
 
 
-compute_IM_stat<-function(tg_list_c,immune_cell_uni_table ,IM_id_list0)
+compute_IM_stat<-function(tg_list_c,immune_cell_uni_table=immune_cell_uni_table0_GS,IM_id_list0=ICTD::IM_id_list)
 {
 	ccc<-c()
 	nn<-c()
 	for(i in 1:length(tg_list_c))
 	{       
         ccc0<-c()
-        for(j in 1:length(IM_id_list0))
+        for(j in 1:length(ICTD::IM_id_list))
         {       
-      if(length(IM_id_list0[[j]])>1)
+      if(length(ICTD::IM_id_list[[j]])>1)
       {
             cc0<-apply(immune_cell_uni_table[tg_list_c[[i]],IM_id_list0[[j]]],1,sum)/sum((1/(1:length(IM_id_list0[[j]]))))
       }
@@ -211,7 +211,7 @@ compute_IM_stat<-function(tg_list_c,immune_cell_uni_table ,IM_id_list0)
       }
                 ccc0<-cbind(ccc0,cc0)
         }
-        colnames(ccc0)<-names(IM_id_list0)
+        colnames(ccc0)<-names(ICTD::IM_id_list)
       ddd<-apply(ccc0,2,mean)
       ccc<-rbind(ccc,ddd)
       nn<-c(nn,colnames(ccc0)[which(ddd==max(ddd))[1]])
