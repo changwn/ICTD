@@ -8,7 +8,7 @@ ICTD web application tutorial is available at : [[https://github.com/changwn/ICT
 
 ![[image]](img/web_app.png)
 
-Backup link: [[https://ictd.ccbb.iupui.edu]]
+Backup link: [[https://ictd.ccbb.iupui.edu]](https://ictd.ccbb.iupui.edu)
 
 
 # Installation
