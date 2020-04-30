@@ -63,6 +63,7 @@ Step2plus_Celltype_marker_Hierarchical_CTES4<-function(tg_R1_lists,data_CORS_can
 	  else
 	  {
 		CTES0<-list()
+		R1_selectedCM_step2_results_HCTES = NULL
 	  }
 	  #c9_Hclust_CTES<-Compute_Rbase_SVD(data.matrix,CTES0)
         #d9<-cor(t(c9_Hclust_CTES),t(tProp))
@@ -78,6 +79,7 @@ Step2plus_Celltype_marker_Hierarchical_CTES4<-function(tg_R1_lists,data_CORS_can
         dim_diff_new <-  (dim_tt-length(CTES0))*((dim_tt-length(CTES0))>0)+ext_cn
         print(paste("new_version, dim_diff:", dim_diff_new, sep=""))
 
+	  ROUNDS = 3
 	  if(length(CTES0)>0)
 	  {
         #par(mfcol=c(2,6))
