@@ -62,7 +62,7 @@ ictd_result <- ICTD(data_bulk)
 
 If you have any questions or problems when using ICTD, please feel free to open a new issue [here](https://github.com/zy26/ICTD/issues). We will fix the new issue ASAP.  You can also email the maintainers and authors below.
 
-- [Wennan Chang](https://zcslab.github.io/people/wennan/)
+- [Wennan Chang](https://changwn.github.io/)
 (wnchang@iu.edu)
 
 PhD candidate at BDR group, Indiana University School of Medicine
