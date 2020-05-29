@@ -19,10 +19,10 @@ Backup link: [[https://ictd.ccbb.iupui.edu]](https://ictd.ccbb.iupui.edu)
 #install dependent pkg
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
-BiocManager::install("impute", version = "3.8")
-BiocManager::install("GO.db", version = "3.8")
-BiocManager::install("sva", version = "3.8")
-BiocManager::install("preprocessCore", version = "3.8")
+BiocManager::install("impute")
+BiocManager::install("GO.db")
+BiocManager::install("sva")
+BiocManager::install("preprocessCore")
 
 rforge <- "http://r-forge.r-project.org"
 install.packages("estimate", repos=rforge, dependencies=TRUE)
