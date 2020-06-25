@@ -11,7 +11,7 @@ ICTD web application tutorial is available at : [[https://github.com/changwn/ICT
 Backup link: [[https://ictd.ccbb.iupui.edu]](https://ictd.ccbb.iupui.edu)
 
 # ICTD Framework
-![[fig1]](img/Fig1.png)
+![[fig1]](img/fig1.png)
 
 # Installation
 
