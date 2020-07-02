@@ -15,9 +15,7 @@
 #R2_two_mat
 #R2_two_mat_withIntercept
 #rm_zero_row
-#getFractions.Abbas
-#TIMER_TCGA
-#TIMER_sc
+
 #unique_signature
 #validate_marker_coverage_by_proportion
 #validate_marker_std_output_parameter_4.6_4.7	#NMFinput may report bug (matrix of list)
@@ -30,7 +28,7 @@
  	P_2nd <- matrix(0, nrow(indicate), ncol(indicate))
  	rownames(P_2nd) <- rownames(indicate)
 	n_gene <- nrow(data)
-	n_sample <- ncol(data)	
+	n_sample <- ncol(data)
 	for(i in 1:n_gene){
 		#print(i)
 		cell <- which(indicate[i, ] == 1)
@@ -41,14 +39,14 @@
 		ddd <- as.data.frame(ddd)
 		coeff <- lm(y~pp + 0, ddd)	#NOTE : the order is matter!
 		P_2nd[i, cell] <- coeff[[1]]
-	}	
+	}
 	return(P_2nd)
  }
 
 
 extract_marker <- function(aaa, method, add){
 	# mmmm is a list to store cell marker, the name of each element is cell type,
-	# 
+	#
 	cutoff <- 0.05
 	mmm <- matrix(0, nrow(aaa), ncol(aaa))
 	rownames(mmm) <- rownames(aaa)
@@ -73,7 +71,7 @@ extract_marker <- function(aaa, method, add){
 	#mmm <- extract_marker(aaa)
 	#row_sub <- apply(mmm, 1, function(row) all( row == 0)) #return logistic value(T/F)
 	#Zero <- which(row_sub == T)
-	#length(Zero) 
+	#length(Zero)
 	#length(which(mmm[, 1] != 0))
 	#length(which(mmm[, 2] != 0) )
 	#length(which(mmm[, 3] != 0) )
@@ -183,18 +181,18 @@ RMSE_two_vector <- function(a, b){
 }
 
 R2_two_vector <- function(predict, actual){
-	#R2 <- 1 - sum( (actual-predict )^2 ) / sum( (actual-mean(actual) )^2  ) 
-	R2 <- 1 - sum( (actual-predict )^2 ) / sum( actual^2 ) 
+	#R2 <- 1 - sum( (actual-predict )^2 ) / sum( (actual-mean(actual) )^2  )
+	R2 <- 1 - sum( (actual-predict )^2 ) / sum( actual^2 )
 	return(R2)
 }
 
 R2_two_vector_withIntercept <- function(predict, actual){
-	R2 <- 1 - sum( (actual-predict )^2 ) / sum( (actual-mean(actual) )^2  ) 
+	R2 <- 1 - sum( (actual-predict )^2 ) / sum( (actual-mean(actual) )^2  )
 	return(R2)
 }
 
 RMSE_one_mat <- function(aaa){
-	
+
 	n_gene <- nrow(aaa)
 	vc <- matrix(NA, n_gene, 1)
 	for(i in 1:n_gene){
@@ -203,7 +201,7 @@ RMSE_one_mat <- function(aaa){
 
 	}
 	rownames(vc) <- rownames(aaa)
-	
+
 	return(vc)
 }
 
@@ -218,7 +216,7 @@ RMSE_two_mat <- function(aaa, bbb){
 
 	}
 	rownames(vc) <- rownames(aaa)
-	
+
 	return(vc)
 }
 
@@ -260,517 +258,6 @@ rm_zero_row <- function(bulk){
 	return(bulk)
 }
 
-getFractions.Abbas <- function(XX,YY,w=NA){
-  ss.remove=c()
-  ss.names=colnames(XX)
-  while(T){
-    if(length(ss.remove)==0)tmp.XX=XX else{
-      if(is.null(ncol(tmp.XX)))return(rep(0,ncol(XX)))
-      tmp.XX=tmp.XX[,-ss.remove]
-    }
-    if(length(ss.remove)>0){
-      ss.names=ss.names[-ss.remove]
-      if(length(ss.names)==0)return(rep(0,ncol(XX)))
-    }
-    if(is.na(w[1]))tmp=lsfit(tmp.XX,YY,intercept=F) else tmp=lsfit(tmp.XX,YY,w,intercept=F)
-    if(is.null(ncol(tmp.XX)))tmp.beta=tmp$coefficients[1] else tmp.beta=tmp$coefficients[1:(ncol(tmp.XX)+0)]
-    if(min(tmp.beta>0))break
-    ss.remove=which.min(tmp.beta)
-  }
-  tmp.F=rep(0,ncol(XX))
-  names(tmp.F)=colnames(XX)
-  tmp.F[ss.names]=tmp.beta
-  return(tmp.F)
-}
-
-TIMER_TCGA <- function(cc = cancer_str){
-	cc = tolower(cc)
-	if(cc=='skcm')cc.type='06A' else cc.type='01A'
-
-	##----- setup parameters and establish the output file -----##
-	signature.genes=c('CD19','TRAT1','CD8B','CCR3','CD163','CCL17')
-	names(signature.genes)=c('B_cell','T_cell.CD4','T_cell.CD8','Neutrophil','Macrophage','DC')
-
-	##----- load and process gene expression data -----##
-	file_str <- paste("C:/Users/wnchang/Documents/F/PhD_Research/TCGA_data/TCGA-", toupper(cancer_str), "_FPKM_T.RData", sep="")
-	data_t <- get(load(file_str))
-	data_ttt <- filter_gene_name(data_t)
-	dd <- data_ttt
-	#dd <- get(load(file_str) )
-	dd=as.matrix(dd)
-	mode(dd)='numeric'	
-	#if(!cc %in% c('gbm','ov','esca','stad'))dd=dd*1e6   ## rsem scaled estimates needs multiply 1e6, Array or RPKM does not need.
-	tmp=strsplit(rownames(dd),'\\|')
-	tmp=sapply(tmp,function(x)x[[1]])
-	tmp.vv=which(nchar(tmp)>1)
-	rownames(dd)=tmp
-	dd=dd[tmp.vv,]
-
-	##----- load immune marker genes from Abbas et al., 2005 -----##
-	tmp=read.csv("C:/Users/wnchang/Documents/F/PhD_Research/2018_05_07_try_TIMER/data/immune_datasets/IRIS-marker-gene.txt", ,header=T,sep='\t',stringsAsFactors=F) # * add / before data
-	marker.list=tmp[,1]
-	names(marker.list)=tmp[,7]
-	names(marker.list)=gsub(' ','_',tmp[,7])
-	names(marker.list)=gsub('Dendritic_Cell','DC',names(marker.list))
-	names(marker.list)=gsub('Neutrophil','Neutrophils',names(marker.list))
-	gsub('Cell','cell',names(marker.list))->names(marker.list)
-
-	##----- load reference data of sorted immune cells -----##
-	load("C:/Users/wnchang/Documents/F/PhD_Research/2018_05_07_try_TIMER/data/immune_datasets/HPCTimmune.Rdata") # * add / before data
-
-	##----- load and process tumor purity data -----##
-	AGP=read.table(paste('C:/Users/wnchang/Documents/F/PhD_Research/2018_05_07_try_TIMER/data/AGP/AGP-',cc,'.txt',sep=''),sep='\t',header=T) # * add / before datas
-	AGP=AGP[which(AGP[,'PoP']>0.01),]
-	tmp=strsplit(rownames(HPCT.immune),';')
-	AffyIDtoGenes=sapply(tmp,function(x)x[[1]])
-	names(AffyIDtoGenes)=sapply(tmp,function(x)x[[2]])
-	marker.list.genes=AffyIDtoGenes[marker.list]
-
-	##----- function to edit TCGA ID, with the option of keeping the first num.res fields -----##
-	getID <- function(sID,num.res=3){
- 		mm=c()
-  		for(id in sID){
-   			tmp=unlist(strsplit(id,'-'))
-    		if(length(tmp)==1){
-     	 		tmp=unlist(strsplit(id,'\\.'))
-    		}
-    		ll='TCGA'
-    		for(j in 2:num.res){
-     			ll=paste(ll,tmp[j],sep='-')
-   		 	}
-    		mm=c(mm,ll)
- 		}
-  		return(mm)
-	}
-	rownames(AGP)=getID(AGP[,1],4)
-	colnames(dd)=getID(colnames(dd),4)
-
-
-	##----- Select single reference samples of pre-selected immune cell types -----##
-	B_cell=362:385
-	T_cell.CD4=grep('T_cell.CD4',colnames(HPCT.immune))
-	T_cell.CD8=grep('T_cell.CD8',colnames(HPCT.immune))
-	NK=328:331
-	Neutrophil=344:361
-	Macrophage=66:80
-	DC=151:238
-	curated.ref=HPCT.immune[,c(B_cell,T_cell.CD4,T_cell.CD8,NK,Neutrophil,Macrophage,DC)]
-
-	curated.cell.types=colnames(curated.ref)
-	names(curated.cell.types)=c(rep('B_cell',length(B_cell)),rep('T_cell.CD4',length(T_cell.CD4)),rep('T_cell.CD8',length(T_cell.CD8)),rep('NK',length(NK)),rep('Neutrophil',length(Neutrophil)),rep('Macrophage',length(Macrophage)),rep('DC',length(DC)))
-
-	load('C:/Users/wnchang/Documents/F/PhD_Research/2018_05_07_try_TIMER/data/immune_datasets/curated.ref.genes.Rdata')
-
-	##----- Combine TCGA gene expression profiles with the selected reference data, remove batch effect and aggregate samples of each immune category by taking the median -----##
-	RemoveBatchEffect <- function(){
-  		#library(sva)
-  		tmp.dd=as.matrix(dd)
-  		tmp=sapply(strsplit(rownames(dd),'\\|'),function(x)x[[1]])
-  		rownames(tmp.dd)=tmp
-  		tmp.dd=tmp.dd[which(nchar(tmp)>1),]
-  		tmp.ss=intersect(rownames(tmp.dd),rownames(curated.ref.genes))
-  		N1=ncol(tmp.dd)
-  		tmp.dd=cbind(tmp.dd[tmp.ss,],curated.ref.genes[tmp.ss,])
-  		tmp.dd=as.matrix(tmp.dd)
-  		mode(tmp.dd)='numeric'
-  		N2=ncol(curated.ref.genes)
-  		tmp.batch=c(rep(1,N1),rep(2,N2))
-  		tmp.dd0=ComBat(tmp.dd,tmp.batch,c())
-  		dd.br=tmp.dd0[,1:N1]
-  		curated.ref.genes.br=tmp.dd0[,(N1+1):(N1+N2)]
-  		tmp0=c()
-  		for(kk in unique(names(curated.cell.types))){
-   		 tmp.vv=which(names(curated.cell.types)==kk)
-   		 tmp0=cbind(tmp0,apply(curated.ref.genes.br[,tmp.vv],1,median,na.rm=T))
-  		}
-  		curated.ref.genes.agg.br=tmp0
-  		colnames(curated.ref.genes.agg.br)=unique(names(curated.cell.types))
-  		#rownames(curated.ref.genes.agg.br)=rownames(curated.ref.genes.br)
-  		return(list(dd=dd.br,rr=curated.ref.genes.br,rrg=curated.ref.genes.agg.br))
-	}
-
-	tmp=RemoveBatchEffect()
-	dd.br=tmp$dd
-	curated.ref.genes.br=tmp$rr
-	curated.ref.genes.agg.br=tmp$rrg
-
-
-	##----- function to calculate the residuals from regression -----##
-	fn <- function(beta0,XX,Y)return(log(sum(abs(Y-XX%*%beta0))))
-
-	##----- function to select genes with expression values negatively correlated with tumor purity -----##
-	getPurityGenes <- function(dd,AGP,thr.p=0.05,thr.c=0,mode='env'){
- 	 tmp.ss=intersect(colnames(dd),rownames(AGP))
-  	if(length(tmp.ss)==0){
-    	colnames(dd)=getID(colnames(dd))
-   		tmp.ss=intersect(colnames(dd),rownames(AGP))
-  	}
-  	tmp.dd=dd[,tmp.ss]	#original
- 	#tmp.dd <- dd    #w
-  	tmp=lapply(rownames(tmp.dd),function(x)cor.test(tmp.dd[x,],as.numeric(AGP[colnames(tmp.dd),2]),method='s'))
-  	tmp.pp=sapply(tmp,function(x)x$p.value)
-  	tmp.cor=sapply(tmp,function(x)x$estimate)
-  	names(tmp.pp)=names(tmp.cor)=rownames(dd)
-  	if(mode=='env')vv=names(which(tmp.pp <=thr.p&tmp.cor < thr.c))
- 	if(mode=='tumor')vv=names(which(tmp.pp <=thr.p&tmp.cor > thr.c))
- 	return(vv)
-	}
-
-	##----- selection genes negatively correlated with purity and overlap with immune marker genes -----##
-	vv.t=getPurityGenes(dd,AGP,thr.p=0.05,thr.c= -0.2)
-	vv.t=intersect(vv.t,rownames(curated.ref.genes.agg.br))
-	vv=intersect(vv.t,marker.list.genes)
-
-	##----- remove outlier genes whose expression may drive the colinearity of similar covariates in the regression -----##
-	RemoveOutliers <- function(vv, ref.dd, thr.q=0.99){
- 	 ## removes upper thr.q quantile for every reference feature
- 	 remove.vv=c()
- 	 for(i in 1:ncol(ref.dd)){
-  	  tmp=quantile(ref.dd[vv,i],thr.q)[1]
-  	  tmp.vv=which(ref.dd[vv,i]>tmp)
- 	  remove.vv=c(remove.vv,tmp.vv)
-	 }
- 	 remove.vv=unique(remove.vv)
- 	 return(vv[-remove.vv])
-	}
-
-	##---- calculate differences between the correlations of reference immune cells using Pearson's or Spearman's correlations -----##
-	tmp.diff=sum(sum(abs(cor(curated.ref.genes.agg.br[vv,],method='p')-cor(curated.ref.genes.agg.br[vv,],method='s'))))
-
-	if(tmp.diff>= -10000){
- 		vv0=RemoveOutliers(vv,curated.ref.genes.agg.br[,-4])
- 		 vv=vv0
-	}
-
-	cat("Number of genes inversely correlated with purity is ",length(vv.t),'\n\n',sep='',file='output-statistics.txt',append=T)
-	cat("Number of immune genes inversely correlated with purity is ",length(vv),'\n\n',sep='',file='output-statistics.txt',append=T)
-
-	##----- calculate the significance of enrichment for purity selected genes to immune marker genes -----##
-	tmp.ss0=intersect(rownames(curated.ref.genes.agg.br),rownames(dd.br))
-	n.immune=length(intersect(marker.list.genes,tmp.ss0))
-	cat("Test if immune genes are enriched for inverse correlation with purity: \n\n",file='output-statistics.txt',append=T)
-	sink(file='output-statistics.txt',append=T);print(fisher.test(matrix(c(length(vv),length(vv.t)-length(vv),n.immune,length(tmp.ss0)-n.immune),2,2)));sink()
-
-
-	##----- function to process deconvolution method in batch -----##
-	BatchFractions <- function(XX,YYd){
-  		Fmat=c()
-  		for(i in 1:ncol(YYd)){
-  			YY=YYd[,i]
-   			tmp.F=getFractions.Abbas(XX,YY)
-    		#tmp.F=getFractions.Optim(XX,YY)
-    		Fmat=rbind(Fmat,tmp.F)
-  		}
-  		rownames(Fmat)=colnames(YYd)
-  		colnames(Fmat)=colnames(XX)
-  		return(Fmat)
-	}
-
-	##----- perform batch deconvolution -----##
-	XX=curated.ref.genes.agg.br[vv,c(-4)]	#chang note: delete NK cell during deconvolution
-	YYd=dd.br[vv,]
-	Fmat=BatchFractions(XX,YYd)
-
-
-	##----- CD4 and CD8 T cells are likely to be similar, resulting in colinearity. Codes below are procedures to remove outlier genes that may result in colinearity until the two covariates are linearly separable. -----##
-	if(cor(Fmat[,2],Fmat[,3])<= -0.2){
-  		if(tmp.diff>=1){
-    		tmp.cor=c()
-    		thr.qlist=c(0.99)
-    		for(tq in thr.qlist){
-     		 vv=intersect(vv.t,marker.list.genes)
-    		 vv0=RemoveOutliers(vv,curated.ref.genes.agg.br[,-4],tq)
-    		 vv=vv0
-     		 XX=curated.ref.genes.agg.br[vv,]
-     		 YYd=dd.br[vv,]
-     		 tmp.Fmat=BatchFractions(XX,YYd)
-     		 tmp.cor=c(tmp.cor,cor(tmp.Fmat[,2],tmp.Fmat[,3],method='s'))
-   			}
-   			tmp.vv=which.max(tmp.cor)
-    		tq=thr.qlist[tmp.vv]
-    		vv=intersect(vv.t,marker.list.genes)
-    		vv0=RemoveOutliers(vv,curated.ref.genes.agg.br[,c(-4)],tq)
-    		vv=vv0
-    		XX=curated.ref.genes.agg.br[vv,c(-4)]
-    		YYd=dd.br[vv,]
-    		Fmat=BatchFractions(XX,YYd)
-    		Fmat0.p=Fmat[grep(cc.type,rownames(Fmat)),]
-    		rownames(Fmat0.p)=getID(rownames(Fmat0.p))
-  		}
-	}
-
-	while(cor(Fmat[,2],Fmat[,3])<=-0.3){
- 	 if(length(vv)<=50)break
-	 vv=vv[-as.numeric(names(table(apply(dd[vv,],2,which.max))))]
-  	 XX=curated.ref.genes.agg.br[vv,c(-4)]
-     #XX=XX[,!colnames(XX) %in% tmp.remove]
-     YYd=dd.br[vv,]
-     Fmat=BatchFractions(XX,YYd)
-	}
-
-	Fmat0.p=Fmat[grep(cc.type,rownames(Fmat)),]
-	rownames(Fmat0.p)=getID(rownames(Fmat0.p))
-
-	TIMER_fraction <- Fmat
-	X <- YYd
-	S <- XX #negative value
-	return(list(Timer_fraction = TIMER_fraction, X = X, S = S))
-
-}
-
-TIMER_sc <- function(cc = cancer_str, data.matrix = data.matrix){
-	cc = tolower(cc)
-	cancer_lib <- c("BLCA", "BRCA", "CESC", "COAD", "DLBC","ESCA", "GBM", "HNSC", "KICH", "KIRC", "KIRP", "LGG", "LIHC", "LUAD", 
-				"LUSC", "OV", "PAAD", "PCPG", "PRAD", "READ", "SARC", "SKCM", "STAD", "TGCT", "THYM", "UCS", "UVM")
-	cancer_lib_lll <- tolower(cancer_lib)
-	if(!cc%in%cancer_lib_lll)
-		stop("please input the cancer type which exist in TCGA library. For example BLCA, COAD, SKCM...")
-	if(cc=='skcm')cc.type='06A' else cc.type='01A'
-
-	##----- setup parameters and establish the output file -----##
-	signature.genes=c('CD19','TRAT1','CD8B','CCR3','CD163','CCL17')
-	names(signature.genes)=c('B_cell','T_cell.CD4','T_cell.CD8','Neutrophil','Macrophage','DC')
-
-	##----- load and process gene expression data -----##
-	#check sample name
-	if(length(colnames(data.matrix)) == 0) {
-	warning("input data do NOT have colnames")
-	colnames(data.matrix) <- paste( "Setsample", 1:ncol(data.matrix), sep="")    
-	}
-	data.matrix <- rm_zero_row(data.matrix)
-	#data_ttt <- filter_gene_name(data_t)
-	data_ttt <- data.matrix
-	dd <- data_ttt
-	#dd <- get(load(file_str) )
-	dd=as.matrix(dd)
-	mode(dd)='numeric'	
-	#if(!cc %in% c('gbm','ov','esca','stad'))dd=dd*1e6   ## rsem scaled estimates needs multiply 1e6, Array or RPKM does not need.
-	tmp=strsplit(rownames(dd),'\\|')
-	tmp=sapply(tmp,function(x)x[[1]])
-	tmp.vv=which(nchar(tmp)>1)
-	rownames(dd)=tmp
-	dd=dd[tmp.vv,]
-
-	##----- load immune marker genes from Abbas et al., 2005 -----##
-	tmp=read.csv("C:/Users/wnchang/Documents/F/PhD_Research/2018_05_07_try_TIMER/data/immune_datasets/IRIS-marker-gene.txt", ,header=T,sep='\t',stringsAsFactors=F) # * add / before data
-	marker.list=tmp[,1]
-	names(marker.list)=tmp[,7]
-	names(marker.list)=gsub(' ','_',tmp[,7])
-	names(marker.list)=gsub('Dendritic_Cell','DC',names(marker.list))
-	names(marker.list)=gsub('Neutrophil','Neutrophils',names(marker.list))
-	gsub('Cell','cell',names(marker.list))->names(marker.list)
-
-	##----- load reference data of sorted immune cells -----##
-	load("C:/Users/wnchang/Documents/F/PhD_Research/2018_05_07_try_TIMER/data/immune_datasets/HPCTimmune.Rdata") # * add / before data
-
-	##----- load and process tumor purity data -----##
-	AGP=read.table(paste('C:/Users/wnchang/Documents/F/PhD_Research/2018_05_07_try_TIMER/data/AGP/AGP-',cc,'.txt',sep=''),sep='\t',header=T) # * add / before datas
-	AGP=AGP[which(AGP[,'PoP']>0.01),]
-	tmp=strsplit(rownames(HPCT.immune),';')
-	AffyIDtoGenes=sapply(tmp,function(x)x[[1]])
-	names(AffyIDtoGenes)=sapply(tmp,function(x)x[[2]])
-	marker.list.genes=AffyIDtoGenes[marker.list]
-
-	##----- function to edit TCGA ID, with the option of keeping the first num.res fields -----##
-	getID <- function(sID,num.res=3){
- 		mm=c()
-  		for(id in sID){
-   			tmp=unlist(strsplit(id,'-'))
-    		if(length(tmp)==1){
-     	 		tmp=unlist(strsplit(id,'\\.'))
-    		}
-    		ll='TCGA'
-    		for(j in 2:num.res){
-     			ll=paste(ll,tmp[j],sep='-')
-   		 	}
-    		mm=c(mm,ll)
- 		}
-  		return(mm)
-	}
-	rownames(AGP)=getID(AGP[,1],4)
-	#colnames(dd)=getID(colnames(dd),4)
-
-
-	##----- Select single reference samples of pre-selected immune cell types -----##
-	B_cell=362:385
-	T_cell.CD4=grep('T_cell.CD4',colnames(HPCT.immune))
-	T_cell.CD8=grep('T_cell.CD8',colnames(HPCT.immune))
-	NK=328:331
-	Neutrophil=344:361
-	Macrophage=66:80
-	DC=151:238
-	curated.ref=HPCT.immune[,c(B_cell,T_cell.CD4,T_cell.CD8,NK,Neutrophil,Macrophage,DC)]
-
-	curated.cell.types=colnames(curated.ref)
-	names(curated.cell.types)=c(rep('B_cell',length(B_cell)),rep('T_cell.CD4',length(T_cell.CD4)),rep('T_cell.CD8',length(T_cell.CD8)),rep('NK',length(NK)),rep('Neutrophil',length(Neutrophil)),rep('Macrophage',length(Macrophage)),rep('DC',length(DC)))
-
-	load('C:/Users/wnchang/Documents/F/PhD_Research/2018_05_07_try_TIMER/data/immune_datasets/curated.ref.genes.Rdata')
-
-	##----- Combine TCGA gene expression profiles with the selected reference data, remove batch effect and aggregate samples of each immune category by taking the median -----##
-	RemoveBatchEffect <- function(){
-  		#library(sva)
-  		tmp.dd=as.matrix(dd)
-  		tmp=sapply(strsplit(rownames(dd),'\\|'),function(x)x[[1]])
-  		rownames(tmp.dd)=tmp
-  		tmp.dd=tmp.dd[which(nchar(tmp)>1),]
-  		tmp.ss=intersect(rownames(tmp.dd),rownames(curated.ref.genes))
-  		N1=ncol(tmp.dd)
-  		tmp.dd=cbind(tmp.dd[tmp.ss,],curated.ref.genes[tmp.ss,])
-  		tmp.dd=as.matrix(tmp.dd)
-  		mode(tmp.dd)='numeric'
-  		N2=ncol(curated.ref.genes)
-  		tmp.batch=c(rep(1,N1),rep(2,N2))
-  		tmp.dd0=ComBat(tmp.dd,tmp.batch,c())
-  		dd.br=tmp.dd0[,1:N1]
-  		curated.ref.genes.br=tmp.dd0[,(N1+1):(N1+N2)]
-  		tmp0=c()
-  		for(kk in unique(names(curated.cell.types))){
-   		 tmp.vv=which(names(curated.cell.types)==kk)
-   		 tmp0=cbind(tmp0,apply(curated.ref.genes.br[,tmp.vv],1,median,na.rm=T))
-  		}
-  		curated.ref.genes.agg.br=tmp0
-  		colnames(curated.ref.genes.agg.br)=unique(names(curated.cell.types))
-  		#rownames(curated.ref.genes.agg.br)=rownames(curated.ref.genes.br)
-  		return(list(dd=dd.br,rr=curated.ref.genes.br,rrg=curated.ref.genes.agg.br))
-	}
-
-	tmp=RemoveBatchEffect()
-	dd.br=tmp$dd
-	curated.ref.genes.br=tmp$rr
-	curated.ref.genes.agg.br=tmp$rrg
-
-
-	##----- function to calculate the residuals from regression -----##
-	fn <- function(beta0,XX,Y)return(log(sum(abs(Y-XX%*%beta0))))
-
-	##----- function to select genes with expression values negatively correlated with tumor purity -----##
-	getPurityGenes <- function(dd,AGP,thr.p=0.05,thr.c=0,mode='env'){
- #	 tmp.ss=intersect(colnames(dd),rownames(AGP))
- # 	if(length(tmp.ss)==0){
- #   	colnames(dd)=getID(colnames(dd))
- #  		tmp.ss=intersect(colnames(dd),rownames(AGP))
- # 	}
- # 	tmp.dd=dd[,tmp.ss]	#original
- # 	#tmp.dd <- dd    #w
- # 	tmp=lapply(rownames(tmp.dd),function(x)cor.test(tmp.dd[x,],as.numeric(AGP[colnames(tmp.dd),2]),method='s'))
- # 	tmp.pp=sapply(tmp,function(x)x$p.value)
- # 	tmp.cor=sapply(tmp,function(x)x$estimate)
- # 	names(tmp.pp)=names(tmp.cor)=rownames(dd)
- # 	if(mode=='env')vv=names(which(tmp.pp <=thr.p&tmp.cor < thr.c))
-# 	if(mode=='tumor')vv=names(which(tmp.pp <=thr.p&tmp.cor > thr.c))
- #	return(vv)
-
- 		#single cell data do NOT have overlap sample with AGP, thus we assume all genes are purity genes.(chang.)
- 		return(rownames(dd))
-	}
-
-	##----- selection genes negatively correlated with purity and overlap with immune marker genes -----##
-	vv.t=getPurityGenes(dd,AGP,thr.p=0.05,thr.c= -0.2)
-	vv.t=intersect(vv.t,rownames(curated.ref.genes.agg.br))
-	vv=intersect(vv.t,marker.list.genes)
-
-	##----- remove outlier genes whose expression may drive the colinearity of similar covariates in the regression -----##
-	RemoveOutliers <- function(vv, ref.dd, thr.q=0.99){
- 	 ## removes upper thr.q quantile for every reference feature
- 	 remove.vv=c()
- 	 for(i in 1:ncol(ref.dd)){
-  	  tmp=quantile(ref.dd[vv,i],thr.q)[1]
-  	  tmp.vv=which(ref.dd[vv,i]>tmp)
- 	  remove.vv=c(remove.vv,tmp.vv)
-	 }
- 	 remove.vv=unique(remove.vv)
- 	 return(vv[-remove.vv])
-	}
-
-	##---- calculate differences between the correlations of reference immune cells using Pearson's or Spearman's correlations -----##
-	tmp.diff=sum(sum(abs(cor(curated.ref.genes.agg.br[vv,],method='p')-cor(curated.ref.genes.agg.br[vv,],method='s'))))
-
-	if(tmp.diff>= -10000){
- 		vv0=RemoveOutliers(vv,curated.ref.genes.agg.br[,-4])
- 		 vv=vv0
-	}
-
-	cat("Number of genes inversely correlated with purity is ",length(vv.t),'\n\n',sep='',file='output-statistics.txt',append=T)
-	cat("Number of immune genes inversely correlated with purity is ",length(vv),'\n\n',sep='',file='output-statistics.txt',append=T)
-
-	##----- calculate the significance of enrichment for purity selected genes to immune marker genes -----##
-	tmp.ss0=intersect(rownames(curated.ref.genes.agg.br),rownames(dd.br))
-	n.immune=length(intersect(marker.list.genes,tmp.ss0))
-	cat("Test if immune genes are enriched for inverse correlation with purity: \n\n",file='output-statistics.txt',append=T)
-	sink(file='output-statistics.txt',append=T);print(fisher.test(matrix(c(length(vv),length(vv.t)-length(vv),n.immune,length(tmp.ss0)-n.immune),2,2)));sink()
-
-
-	##----- function to process deconvolution method in batch -----##
-	BatchFractions <- function(XX,YYd){
-  		Fmat=c()
-  		for(i in 1:ncol(YYd)){
-  			YY=YYd[,i]
-   			tmp.F=getFractions.Abbas(XX,YY)
-    		#tmp.F=getFractions.Optim(XX,YY)
-    		Fmat=rbind(Fmat,tmp.F)
-  		}
-  		rownames(Fmat)=colnames(YYd)
-  		colnames(Fmat)=colnames(XX)
-  		return(Fmat)
-	}
-
-	##----- perform batch deconvolution -----##
-	XX=curated.ref.genes.agg.br[vv,c(-4)]	#chang note: delete NK cell during deconvolution
-	YYd=dd.br[vv,]
-	Fmat=BatchFractions(XX,YYd)
-
-if( !is.na( cor(Fmat[,2],Fmat[,3])[1] ) ){
-	print("Remove co-linear!!!")
-	##----- CD4 and CD8 T cells are likely to be similar, resulting in colinearity. Codes below are procedures to remove outlier genes that may result in colinearity until the two covariates are linearly separable. -----##
-	if(cor(Fmat[,2],Fmat[,3])<= -0.2){
-  		if(tmp.diff>=1){
-    		tmp.cor=c()
-    		thr.qlist=c(0.99)
-    		for(tq in thr.qlist){
-     		 vv=intersect(vv.t,marker.list.genes)
-    		 vv0=RemoveOutliers(vv,curated.ref.genes.agg.br[,-4],tq)
-    		 vv=vv0
-     		 XX=curated.ref.genes.agg.br[vv,]
-     		 YYd=dd.br[vv,]
-     		 tmp.Fmat=BatchFractions(XX,YYd)
-     		 tmp.cor=c(tmp.cor,cor(tmp.Fmat[,2],tmp.Fmat[,3],method='s'))
-   			}
-   			tmp.vv=which.max(tmp.cor)
-    		tq=thr.qlist[tmp.vv]
-    		vv=intersect(vv.t,marker.list.genes)
-    		vv0=RemoveOutliers(vv,curated.ref.genes.agg.br[,c(-4)],tq)
-    		vv=vv0
-    		XX=curated.ref.genes.agg.br[vv,c(-4)]
-    		YYd=dd.br[vv,]
-    		Fmat=BatchFractions(XX,YYd)
-    		Fmat0.p=Fmat[grep(cc.type,rownames(Fmat)),]
-    		rownames(Fmat0.p)=getID(rownames(Fmat0.p))
-  		}
-	}
-
-	count=0
-	while(cor(Fmat[,2],Fmat[,3])<=-0.3){
-		print("Remove co-linearality iterativelly!!~")
-		count=count+1
-		#print(count)
- 	 if(length(vv)<=50)break
-	 vv=vv[-as.numeric(names(table(apply(dd[vv,],2,which.max))))]
-  	 XX=curated.ref.genes.agg.br[vv,c(-4)]
-     #XX=XX[,!colnames(XX) %in% tmp.remove]
-     YYd=dd.br[vv,]
-     Fmat=BatchFractions(XX,YYd)
-     	if(count>=30)break
-	}
-}
-	#Fmat0.p=Fmat[grep(cc.type,rownames(Fmat)),]
-	#rownames(Fmat0.p)=getID(rownames(Fmat0.p))
-
-	TIMER_fraction <- Fmat
-	X <- YYd
-	S <- XX #negative value
-	return(list(Timer_fraction = TIMER_fraction, X = X, S = S))
-
-}
 
 unique_signature <- function(aaa, cutoff=0.05){
 
@@ -866,7 +353,7 @@ validate_marker_coverage_by_proportion <- function(origiData=data.matrix,truePro
 	for(i in 1:length(marker_true)){
 		geneLib = marker_true[[i]] 	#cell type in true marker list
 		geneLib1 = marker_true[[i]]	#for matrix
-		
+
 		for(pp in 1:length(markList)){
 			#print(names(markList)[pp])
 			#print("::::::::::::::")
@@ -874,7 +361,7 @@ validate_marker_coverage_by_proportion <- function(origiData=data.matrix,truePro
 			geneLib = setdiff(geneLib, geneSet)
 			#print(length(geneLib) )
 			common_mat[i,pp]=length(intersect(geneSet,geneLib1))
-			
+
 		}
 
 		marker_miss[[i]] = geneLib
@@ -884,9 +371,9 @@ validate_marker_coverage_by_proportion <- function(origiData=data.matrix,truePro
 	names(marker_miss)=names(marker_true)	#this is residual gene
 
 	vv.tmp = apply(common_mat[1:ncol(ccc),], 2, max)
-	common_mat[ncol(ccc)+2, ] = vv.tmp / common_mat[ncol(ccc)+1, ]	
+	common_mat[ncol(ccc)+2, ] = vv.tmp / common_mat[ncol(ccc)+1, ]
 	rownames(common_mat) = c(colnames(ccc),"model_size","top1_percentage")
-	colnames(common_mat) = names(markList)	
+	colnames(common_mat) = names(markList)
 
 	for(i in 1:length(marker_true)){
 		geneLib = marker_true[[i]]
@@ -1053,7 +540,7 @@ validate_marker_std_output_parameter_4.6_4.7 <- function(data.matrix=data.matrix
 	#output1 = validate_marker_coverage_by_proportion(origiData=data.matrix,truePro=tProp,markList=R1_filter_step1_results_new[[1]],NMFmarker=NMF_input1[[2]],table=immune_cell_uni_table0_GS,cor.cutoff)
 	#output2 = validate_marker_coverage_by_proportion(origiData=data.matrix,truePro=tProp,markList=R1_filter_step1_results_new[[4]],NMFmarker=NMF_input1[[2]],table=immune_cell_uni_table0_GS,cor.cutoff)
 
-output1 = validate_marker_coverage_by_proportion(origiData=data.matrix,truePro=tProp,markList=R1_filter_step1_results_new[[1]],NMFmarker=NMF_input1,table=immune_cell_uni_table0_GS,cor.cutoff)	
+output1 = validate_marker_coverage_by_proportion(origiData=data.matrix,truePro=tProp,markList=R1_filter_step1_results_new[[1]],NMFmarker=NMF_input1,table=immune_cell_uni_table0_GS,cor.cutoff)
 output2 = validate_marker_coverage_by_proportion(origiData=data.matrix,truePro=tProp,markList=R1_filter_step1_results_new[[4]],NMFmarker=NMF_input1,table=immune_cell_uni_table0_GS,cor.cutoff)
 
 
@@ -1076,7 +563,7 @@ output2 = validate_marker_coverage_by_proportion(origiData=data.matrix,truePro=t
 	return(list(o1_top100_ICTDmarker=o1_top100_ICTDmarker,o1_top100_cor_gene=o1_top100_cor_gene,
 				o2_R1_overlap=o2_R1_overlap,o2_R1_svd_cor=o2_R1_svd_cor,
 				o3_R4_overlap=o3_R4_overlap,o3_R4_svd_cor=o3_R4_svd_cor,
-				o4_R4_4.1_svd_cor=o4_R4_4.1_svd_cor,o4_R4_4.2_svd_cor=o4_R4_4.2_svd_cor,o4_R4_4.3_svd_cor=o4_R4_4.3_svd_cor, 
+				o4_R4_4.1_svd_cor=o4_R4_4.1_svd_cor,o4_R4_4.2_svd_cor=o4_R4_4.2_svd_cor,o4_R4_4.3_svd_cor=o4_R4_4.3_svd_cor,
 				o4_R4_4.4_svd_cor=o4_R4_4.4_svd_cor,o4_R4_4.5_svd_cor=o4_R4_4.5_svd_cor,
 				o4_R4_4.6_svd_cor=o4_R4_4.6_svd_cor,o4_R4_4.7_svd_cor=o4_R4_4.7_svd_cor,
 				o5_nmf_overlap=o5_nmf_overlap,o5_nmf_svd_cor=o5_nmf_svd_cor))
@@ -1084,7 +571,7 @@ output2 = validate_marker_coverage_by_proportion(origiData=data.matrix,truePro=t
 }
 
 save_R4_marker <- function(R4_list = R1_filter_step1_results_new[[4]]){
-	
+
 	R4_unique = list()
 	llll_name = c()
 	tt = table(names(R4_list))
@@ -1110,7 +597,7 @@ save_R4_marker <- function(R4_list = R1_filter_step1_results_new[[4]]){
 }
 
 #######################################
-# test 75688 neuron and B cell 
+# test 75688 neuron and B cell
 
 #data_nnn <- data.matrix[R1_filter_step1_results_new[[4]][[1]],]
 #data_bbb <- data.matrix[R1_filter_step1_results_new[[4]][[33]],]
@@ -1119,9 +606,9 @@ save_R4_marker <- function(R4_list = R1_filter_step1_results_new[[4]]){
 
 #cor(v_nnn, v_bbb)
 #> R1_filter_step1_results_new[[4]][[1]]
-# [1] "LRMP"     "MEF2C"    "LCP1"     "STAP1"    "HLA-DMB"  "TCL1A"    "FCRLA"    "KIAA0922" "HMGB1"    "DLGAP5"  
+# [1] "LRMP"     "MEF2C"    "LCP1"     "STAP1"    "HLA-DMB"  "TCL1A"    "FCRLA"    "KIAA0922" "HMGB1"    "DLGAP5"
 #> R1_filter_step1_results_new[[4]][[33]]
-# [1] "LRMP"     "DLGAP5"   "TCL1A"    "FCRLA"    "KIAA0922" "HMGB1"    "DTX1"     "CDKN3"    "DEPDC1"   "TPX2"   
+# [1] "LRMP"     "DLGAP5"   "TCL1A"    "FCRLA"    "KIAA0922" "HMGB1"    "DTX1"     "CDKN3"    "DEPDC1"   "TPX2"
 
 
 
@@ -1141,7 +628,7 @@ plot_cor_bar <- function(m_epic=epic.ccc,m_timer=timer.ccc,m_ictd=ictd.ccc,GSEna
 	max_4.1 =apply(check[["o4_R4_4.1_svd_cor"]], 1, max)
 	max_4.2 =apply(check[["o4_R4_4.2_svd_cor"]], 1, max)
 	max_4.3 =apply(check[["o4_R4_4.3_svd_cor"]], 1, max)
-	max_R4 =apply(check[["o3_R4_svd_cor"]], 1, max) 
+	max_R4 =apply(check[["o3_R4_svd_cor"]], 1, max)
 
 	aaa <- rbind(max_timer,max_epic,max_4.1,max_4.2,max_4.3,max_R4)
 	aaa <- as.data.frame(aaa)
@@ -1187,7 +674,7 @@ plot_bar_ES <- function(m_epic=epic.ccc,m_timer=timer.ccc,m_ictd=ictd.ccc,GSEnam
 	max_4.1 =apply(check[["o4_R4_4.1_svd_cor"]], 1, max)
 	max_4.2 =apply(check[["o4_R4_4.2_svd_cor"]], 1, max)
 	max_4.3 =apply(check[["o4_R4_4.3_svd_cor"]], 1, max)
-	max_R4 =apply(check[["o3_R4_svd_cor"]], 1, max) 
+	max_R4 =apply(check[["o3_R4_svd_cor"]], 1, max)
 
 	aaa <- rbind(max_timer,max_epic,max_4.1,max_4.2,max_4.3,max_R4)
 	aaa <- as.data.frame(aaa)
@@ -1227,7 +714,7 @@ plot_bar_ES <- function(m_epic=epic.ccc,m_timer=timer.ccc,m_ictd=ictd.ccc,GSEnam
 	#do.call(grid.arrange(grobs = pp, layout_matrix = lay) )
 	grid.arrange(grobs = pp, layout_matrix = lay)
 	dev.off()
-	
+
 }
 
 plot_bar_ES_addtest <- function(m_epic=epic.ccc,m_timer=timer.ccc,m_ictd=ictd.ccc,GSEname=dataSetName,check=overlap_mark,pp=pp_list){
@@ -1244,8 +731,8 @@ plot_bar_ES_addtest <- function(m_epic=epic.ccc,m_timer=timer.ccc,m_ictd=ictd.cc
 	max_4.1 =apply(check[["o4_R4_4.1_svd_cor"]], 1, max)
 	max_4.2 =apply(check[["o4_R4_4.2_svd_cor"]], 1, max)
 	max_4.3 =apply(check[["o4_R4_4.3_svd_cor"]], 1, max)
-	max_4.4 =apply(check[["o4_R4_4.4_svd_cor"]], 1, max) 
-	max_R4 =apply(check[["o3_R4_svd_cor"]], 1, max) 
+	max_4.4 =apply(check[["o4_R4_4.4_svd_cor"]], 1, max)
+	max_R4 =apply(check[["o3_R4_svd_cor"]], 1, max)
 
 	aaa <- rbind(max_timer,max_epic,max_4.1,max_4.2,max_4.3,max_4.4, max_R4)
 	aaa <- as.data.frame(aaa)
@@ -1285,7 +772,7 @@ plot_bar_ES_addtest <- function(m_epic=epic.ccc,m_timer=timer.ccc,m_ictd=ictd.cc
 	#do.call(grid.arrange(grobs = pp, layout_matrix = lay) )
 	grid.arrange(grobs = pp, layout_matrix = lay)
 	dev.off()
-	
+
 }
 
 
@@ -1312,7 +799,7 @@ R1_selectedCM_step2_results_HP
 
 f_name=paste(dataSetName,"_parameter.RData",sep="")
 save(list=c("bulk_data","tProp","R1_whole","data_CORS_cancer","overlap_mark",
-	"cancer_module","module_selected","MR_IM_result_new_c","list_new_c2","R1_filter_step1_results_new","R1_selectedCM_step2_results_new","NMF_input1"), 
+	"cancer_module","module_selected","MR_IM_result_new_c","list_new_c2","R1_filter_step1_results_new","R1_selectedCM_step2_results_new","NMF_input1"),
 	file=f_name)
 
 }
@@ -1337,15 +824,15 @@ check_gene_expr_in_cell <- function(sc_RNA, Cell_Type, genelist,GSEid){
 
   data_subset = list()
   for(i in 1:length(cell_library)){
-  		
+
       col_loca = which(Cell_Type==cell_library[[i]] )
       data_subset[[i]] <- sc_RNA[genelist, col_loca, drop=F]
-  } 
+  }
   names(data_subset) <- cell_library
 
   data_mean = list()
   for(i in 1:length(cell_library)){
-  	
+
       data_mean[[i]] <- apply(data_subset[[i]],1,mean)
   }
   names(data_mean) <- cell_library
@@ -1378,15 +865,15 @@ check_gene_expr_in_cell_new <- function(sc_RNA, Cell_Type, genelist,GSEid){
 
   data_subset = list()
   for(i in 1:length(cell_library)){
-  		
+
       col_loca = which(Cell_Type==cell_library[[i]] )
       data_subset[[i]] <- sc_RNA[genelist, col_loca, drop=F]
-  } 
+  }
   names(data_subset) <- cell_library
 
   data_mean = list()
   for(i in 1:length(cell_library)){
-  	
+
       data_mean[[i]] <- apply(data_subset[[i]],1,mean)
   }
   names(data_mean) <- cell_library
@@ -1577,7 +1064,7 @@ K=ncol(NMF_indi_all)
 indiS=1-NMF_indi_all
 indiS[,which(P_fix==0)]=0*indiS[,which(P_fix==0)]
 ###########
-	
+
 ###########Parameter settings
 RR = RR0
 theta=500 ##penalty parameter for constraints on NMF_indi_all
@@ -1616,8 +1103,8 @@ return(list(X1=X1, U=U, V=V, ttt1=ttt1))
 ##############cross-validation
 #################add fixed rows of P,basically the same as qnmf_indisS_all_revise_addP, but theta parameter is changed.
 qnmf_indisS_all_revise_addP_RR_pkg<-function(X1,initial_U,initial_V,NMF_indi_all,indiS_method,UM,VM,alpha,beta,gamma,roh,RR,qq, iter, epslog,mscale, cnormalize, addP, P_fix){
-##########This is for qua matrix factorization, indiS is an indicator matrix equal to 1-NMF_indi_all; indiS_method has two options, either project descent, or gradient descent; theta is the penalty on similarity of U and NMF_indi_all matrix; qq is the value controling the updating scheme; 
-##X1: original matrix 
+##########This is for qua matrix factorization, indiS is an indicator matrix equal to 1-NMF_indi_all; indiS_method has two options, either project descent, or gradient descent; theta is the penalty on similarity of U and NMF_indi_all matrix; qq is the value controling the updating scheme;
+##X1: original matrix
 ##initial_U
 ##initial_V
 ##NMF_indi_all
@@ -1699,7 +1186,7 @@ qnmf_indisS_all_revise_addP_RR_pkg<-function(X1,initial_U,initial_V,NMF_indi_all
 	objs=NULL; objs.parts=NULL
 	flag=0
 	rrr=0
-	eps=10^(-epslog) 
+	eps=10^(-epslog)
 	extraOut=NULL
 	extraOut_rnames=NULL
 
@@ -1708,7 +1195,7 @@ qnmf_indisS_all_revise_addP_RR_pkg<-function(X1,initial_U,initial_V,NMF_indi_all
 	s1=sum((X1-U%*%t(V))^2)
 	s21=sum((U-initial_U)^2); s22=sum((V-initial_V)^2);
 	s2=s21*alpha+s22*beta
-	s31=sum(diag(t(U)%*%(DU-UM)%*%U)); s32=sum(diag(t(V)%*%(DV-VM)%*%V)); 
+	s31=sum(diag(t(U)%*%(DU-UM)%*%U)); s32=sum(diag(t(V)%*%(DV-VM)%*%V));
 	s3=s31*gamma+s32*roh
 	s4=2*theta*sum(diag(t(U)%*%indiS))
 	obj_tmp=s1+s2+s3+s4
@@ -1815,11 +1302,11 @@ qnmf_indisS_all_revise_addP_RR_pkg<-function(X1,initial_U,initial_V,NMF_indi_all
 				#}
 			}
 		}
-		
+
 		s1=sum((X1-U%*%t(V))^2)
 		s21=sum((U-initial_U)^2); s22=sum((V-initial_V)^2);
 		s2=s21*alpha+s22*beta
-		s31=sum(diag(t(U)%*%(DU-UM)%*%U)); s32=sum(diag(t(V)%*%(DV-VM)%*%V)); 
+		s31=sum(diag(t(U)%*%(DU-UM)%*%U)); s32=sum(diag(t(V)%*%(DV-VM)%*%V));
 		s3=s31*gamma+s32*roh
 		s4=2*theta*sum(diag(t(U)%*%indiS))
 		obj_tmp=s1+s2+s3+s4
@@ -1838,7 +1325,7 @@ qnmf_indisS_all_revise_addP_RR_pkg<-function(X1,initial_U,initial_V,NMF_indi_all
 			flag=1
 			print("The program is killed because of singular updates")
 		}
-		
+
 		Xpred=U%*%t(V)
 #		print(paste("The fitting residual is", sum((Xpred-X1)^2)))
 	#	if(rrr%%10==0){

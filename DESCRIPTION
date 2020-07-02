@@ -11,6 +11,5 @@ Encoding: UTF-8
 LazyData: true
 Depends: R (>= 3.4.0), biclust
 Imports: Rcpp (>= 0.11.0), methods, Matrix, 
-         grDevices, graphics, stats, utils, gplots, bcv, igraph, WGCNA, tictoc, NMF, 
+         grDevices, graphics, stats, utils, gplots, bcv, igraph, tictoc, NMF, 
          clue, pracma, ggplot2, reshape2, gridExtra, nnls
-Suggests: impute, GO.db, estimate, sva, progress, preprocessCore
