@@ -16,34 +16,9 @@ Backup link: [[https://ictd.ccbb.iupui.edu]](https://ictd.ccbb.iupui.edu)
 # Installation
 
 ```
-#install dependent pkg
-if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-BiocManager::install("impute")
-BiocManager::install("GO.db")
-BiocManager::install("sva")
-BiocManager::install("preprocessCore")
-
-rforge <- "http://r-forge.r-project.org"
-install.packages("estimate", repos=rforge, dependencies=TRUE)
-
 #install ICTD
 install.packages("devtools")
 devtools::install_github("changwn/ICTD")
-```
-
-
-
-Note : For old R version which cannot install 'BiocManager', please use below command to install the dependency.
-```
-source("https://bioconductor.org/biocLite.R")
-biocLite("impute")
-biocLite("GO.db")
-biocLite("sva")
-biocLite("preprocessCore")
-
-rforge <- "http://r-forge.r-project.org"
-install.packages("estimate", repos=rforge, dependencies=TRUE)
 ```
 
 # Example
