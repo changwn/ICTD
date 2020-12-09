@@ -1,6 +1,10 @@
 # Description
 
-This method is described in the publication from Biorxiv, 2018 available at [[https://www.biorxiv.org/content/10.1101/426593v2]](https://www.biorxiv.org/content/10.1101/426593v2)
+This method is described in the publication from Biorxiv, 2018 available at [[https://www.biorxiv.org/content/10.1101/426593v2]](https://www.biorxiv.org/content/10.1101/426593v3)
+
+To cite our software, please use the independent DOI from Zenodo.
+[![DOI](https://zenodo.org/badge/224000547.svg)](https://zenodo.org/badge/latestdoi/224000547)
+
 
 ICTD web application demo is available at : [[https://shiny.ph.iu.edu/ICTD/]](https://shiny.ph.iu.edu/ICTD/)
 
