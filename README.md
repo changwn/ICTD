@@ -22,6 +22,7 @@ Backup link: [[https://ictd.ccbb.iupui.edu]](https://ictd.ccbb.iupui.edu)
 ```
 #install ICTD
 install.packages("devtools")
+Sys.setenv("R_REMOTES_NO_ERRORS_FROM_WARNINGS" = "true")
 devtools::install_github("changwn/ICTD")
 ```
 
